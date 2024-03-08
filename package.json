@@ -4,6 +4,7 @@
   "description": "Phonebook backend exercise for fs open",
   "main": "index.js",
   "scripts": {
+    "start": "node ./bin/www",
     "dev": "nodemon index.js",
     "build:ui": "rm -rf dist && cd ./phonebook-fe && npm run build && cp -r dist ../",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
