@@ -8,7 +8,7 @@ let contacts = data.contacts;
 
 const { generateId } = require('./util.js');
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT);
 
 app.use(cors());
