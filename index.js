@@ -52,7 +52,7 @@ app.get('/api/persons/:id', async (request, response, next) => {
     response.json(contact);
   } catch (error) {
     next(error);
-    return response.status(400).send({ error: 'Wrong ID format' });
+    return response.status(400).json({ error: 'Wrong ID format' });
   }
 });
 
@@ -110,25 +110,24 @@ app.post('/api/persons/', async (request, response, next) => {
 });
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' });
+  response.status(404).json({ error: 'unknown endpoint' });
 };
+
 app.use(unknownEndpoint);
 
 // error handler middleware
 const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: error.message });
+    return response.status(400).json({ error: 'Wrong ID format' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message });
+  } else if (error.name === 'NotFoundError') {
+    return response.status(404).json({ error: 'Resource not found' });
   }
-  if (error.name === 'NotFoundError') {
-    return response.status(404).send({ error: error.message });
-  }
-  if (error.name === 'MongoServerError') {
-    return response.status(409).send({ error: error.message });
-  }
-  if (error.name === 'ValidationError') {
-    return response.status(404).send({ error: error.message });
-  }
-  return response.status(500);
+  next(error);
+  return response.status(500).json({ error: 'Internal server error' });
 };
-// last middleware to be called
+
 app.use(errorHandler);
