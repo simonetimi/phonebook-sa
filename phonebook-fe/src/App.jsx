@@ -48,7 +48,10 @@ const App = () => {
         setNotification({ type: 'success', message: `Contact "${personToUpdate.name}" updated!` });
         return;
       } catch (error) {
-        setNotification({ type: 'error', message: 'Error updating phone number!' });
+        setNotification({
+          type: 'error',
+          message: `Error updating phone number! ${error.response.data.error}`,
+        });
         return;
       }
     } else if (phoneIsPresent) {
@@ -67,7 +70,10 @@ const App = () => {
         message: `Contact "${newPerson.name}" added!`,
       });
     } catch (error) {
-      setNotification({ type: 'error', message: 'Error adding contact!' });
+      setNotification({
+        type: 'error',
+        message: `Error adding contact! Error: ${error.response.data.error}}`,
+      });
     }
   };
 

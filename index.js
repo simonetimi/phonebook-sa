@@ -70,7 +70,11 @@ app.put('/api/persons/:id', async (request, response, next) => {
   const id = request.params.id;
   const contact = request.body;
   try {
-    await Contact.findByIdAndUpdate(id, contact);
+    await Contact.findByIdAndUpdate(id, contact, {
+      new: true,
+      runValidators: true,
+      context: 'query',
+    });
     response.status(200).end();
   } catch (error) {
     next(error);
@@ -113,13 +117,16 @@ app.use(unknownEndpoint);
 // error handler middleware
 const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'Wrong ID format' });
+    return response.status(400).send({ error: error.message });
   }
   if (error.name === 'NotFoundError') {
-    return response.status(404).send({ error: 'Resource not found' });
+    return response.status(404).send({ error: error.message });
   }
   if (error.name === 'MongoServerError') {
-    return response.status(409).send({ error: 'Resource already present in the db' });
+    return response.status(409).send({ error: error.message });
+  }
+  if (error.name === 'ValidationError') {
+    return response.status(404).send({ error: error.message });
   }
   return response.status(500);
 };
